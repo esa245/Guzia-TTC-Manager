@@ -5,19 +5,18 @@ import { AdmissionForm } from './components/AdmissionForm';
 import { PaymentForm } from './components/PaymentForm';
 import { StudentList } from './components/StudentList';
 import { ExpenseManager } from './components/ExpenseManager';
-import { DataBackup } from './components/DataBackup';
 import { useStudents } from './hooks/useStudents';
 import { TabType } from './types';
-import { LayoutDashboard, UserPlus, Banknote, Users, TrendingDown, Database } from 'lucide-react';
+import { LayoutDashboard, UserPlus, Banknote, Users, TrendingDown } from 'lucide-react';
 
 const App: React.FC = () => {
   const [showDashboard, setShowDashboard] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
-  const { students, expenses, addStudent, addPayment, deleteStudent, addExpense, deleteExpense, importData, resetData } = useStudents();
+  const { students, expenses, addStudent, addPayment, deleteStudent, addExpense, deleteExpense } = useStudents();
 
   if (!showDashboard) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 gap-6">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 gap-6 animate-fade-in">
         <h1 className="text-4xl font-bold text-gray-900">Home page hallo</h1>
         <button 
           onClick={() => setShowDashboard(true)}
@@ -42,8 +41,6 @@ const App: React.FC = () => {
         return <StudentList students={students} onDelete={deleteStudent} />;
       case 'expense':
         return <ExpenseManager expenses={expenses} onAddExpense={addExpense} onDeleteExpense={deleteExpense} />;
-      case 'settings':
-        return <DataBackup students={students} expenses={expenses} onImport={importData} onReset={resetData} />;
       default:
         return <Dashboard students={students} expenses={expenses} />;
     }
@@ -87,18 +84,13 @@ const App: React.FC = () => {
               icon={<Users size={20}/>} 
               label="ছাত্র তালিকা" 
             />
-            <NavButton 
-              active={activeTab === 'settings'} 
-              onClick={() => setActiveTab('settings')} 
-              icon={<Database size={20}/>} 
-              label="ব্যাকআপ" 
-            />
           </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-grow container mx-auto p-4 md:p-6 animate-fade-in">
+      {/* Added key={activeTab} to force animation restart on tab change */}
+      <main key={activeTab} className="flex-grow container mx-auto p-4 md:p-6 animate-fade-in">
         {renderContent()}
       </main>
 

@@ -57,4 +57,4 @@ export const EXPENSE_CATEGORIES = [
   "Others"
 ] as const;
 
-export type TabType = 'dashboard' | 'admission' | 'payment' | 'expense' | 'database' | 'settings';
+export type TabType = 'dashboard' | 'admission' | 'payment' | 'expense' | 'database';

@@ -111,24 +111,6 @@ export const useStudents = () => {
     }
   };
 
-  const importData = (data: { students: Student[], expenses: Expense[] }): boolean => {
-    if (window.confirm('সতর্কতা: বর্তমান ডেটা নতুন আপলোড করা ডেটা দ্বারা প্রতিস্থাপন করা হবে। আপনি কি নিশ্চিত?')) {
-      setStudents(data.students || []);
-      setExpenses(data.expenses || []);
-      return true;
-    }
-    return false;
-  };
-
-  const resetData = (): boolean => {
-    if (window.confirm('সতর্কতা: আপনি কি নিশ্চিতভাবে সমস্ত ডেটা রিসেট করতে চান?')) {
-       setStudents(DEMO_STUDENTS);
-       setExpenses(DEMO_EXPENSES);
-       return true;
-    }
-    return false;
-  };
-
   return {
     students,
     expenses,
@@ -136,8 +118,6 @@ export const useStudents = () => {
     addPayment,
     deleteStudent,
     addExpense,
-    deleteExpense,
-    importData,
-    resetData
+    deleteExpense
   };
 };
