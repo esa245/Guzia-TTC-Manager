@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Header } from './components/Header';
 import { AdmissionForm } from './components/AdmissionForm';
 import { PaymentForm } from './components/PaymentForm';
 import { StudentList } from './components/StudentList';
@@ -45,7 +44,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
-      <Header />
       
       {/* Navigation Menu */}
       <div className="bg-white shadow sticky top-0 z-10 overflow-x-auto">
@@ -80,15 +78,10 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      {/* Added key={activeTab} to force animation restart on tab change */}
       <main key={activeTab} className="flex-grow container mx-auto p-4 md:p-6 animate-fade-in">
         {renderContent()}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm">
-        <p>© {new Date().getFullYear()} গুজিয়া টেকনিক্যাল ট্রেনিং সেন্টার | কারিগরি শিক্ষা বোর্ডে অনুমোদিত</p>
-      </footer>
     </div>
   );
 };
