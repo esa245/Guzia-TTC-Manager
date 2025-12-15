@@ -7,6 +7,8 @@ const EXPENSE_DB_KEY = 'gttc_expenses_db';
 // --- DEMO DATA GENERATORS ---
 const TODAY = new Date().toISOString().split('T')[0];
 const YESTERDAY = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+const TWO_DAYS_AGO = new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0];
+const LAST_WEEK = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
 const LAST_MONTH = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
 
 const DEMO_STUDENTS: Student[] = [
@@ -63,6 +65,40 @@ const DEMO_STUDENTS: Student[] = [
     fee: 10000,
     admissionDate: TODAY,
     payments: []
+  },
+  {
+    id: 'GTTC-1006',
+    name: 'আরিফ হোসেন',
+    mobile: '01312345678',
+    course: 'Plumbing',
+    fee: 7000,
+    admissionDate: LAST_WEEK,
+    payments: [
+       { amount: 2000, date: LAST_WEEK, method: 'Cash', category: 'Admission Fee' }
+    ]
+  },
+  {
+    id: 'GTTC-1007',
+    name: 'নুসরাত জাহান',
+    mobile: '01412345678',
+    course: 'Graphics Design',
+    fee: 8000,
+    admissionDate: TWO_DAYS_AGO,
+    payments: [
+       { amount: 8000, date: TWO_DAYS_AGO, method: 'Bkash', category: 'Admission Fee' }
+    ]
+  },
+  {
+    id: 'GTTC-1008',
+    name: 'কামাল হাসান',
+    mobile: '01799887766',
+    course: 'Computer Office App',
+    fee: 5000,
+    admissionDate: LAST_MONTH,
+    payments: [
+      { amount: 1000, date: LAST_MONTH, method: 'Cash', category: 'Admission Fee' },
+      { amount: 500, date: LAST_WEEK, method: 'Rocket', category: 'Monthly Fee' }
+    ]
   }
 ];
 
@@ -98,6 +134,22 @@ const DEMO_EXPENSES: Expense[] = [
     date: TODAY,
     description: 'Paper and Toner',
     method: 'Cash'
+  },
+  {
+    id: '5',
+    category: 'Electricity Bill',
+    amount: 1200,
+    date: LAST_WEEK,
+    description: 'Monthly electricity bill',
+    method: 'Nagad'
+  },
+  {
+    id: '6',
+    category: 'Marketing',
+    amount: 2000,
+    date: TWO_DAYS_AGO,
+    description: 'Facebook Ad Boost',
+    method: 'Bank'
   }
 ];
 
@@ -106,7 +158,6 @@ export const useStudents = () => {
   const [students, setStudents] = useState<Student[]>(() => {
     try {
       const storedData = localStorage.getItem(DB_KEY);
-      // If local storage has data, use it. If empty array or null, use DEMO data for showcase.
       if (storedData) {
          const parsed = JSON.parse(storedData);
          return parsed.length > 0 ? parsed : DEMO_STUDENTS;
@@ -223,14 +274,13 @@ export const useStudents = () => {
   };
 
   const resetData = (): boolean => {
-    if (window.confirm('সতর্কতা: আপনি কি নিশ্চিতভাবে সমস্ত ডেটা ডিলিট করতে চান? এই কাজ আর ফিরানো যাবে না।')) {
-       if(window.confirm('সত্যিই সব ডিলিট করবেন?')) {
-          setStudents([]);
-          setExpenses([]);
-          localStorage.removeItem(DB_KEY);
-          localStorage.removeItem(EXPENSE_DB_KEY);
-          return true;
-       }
+    if (window.confirm('সতর্কতা: আপনি কি নিশ্চিতভাবে সমস্ত ডেটা ডিলিট করতে চান?')) {
+       // Reset to DEMO data instead of empty for full demo experience
+       setStudents(DEMO_STUDENTS);
+       setExpenses(DEMO_EXPENSES);
+       localStorage.removeItem(DB_KEY);
+       localStorage.removeItem(EXPENSE_DB_KEY);
+       return true;
     }
     return false;
   };
