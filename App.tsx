@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
-import { Dashboard } from './components/Dashboard';
 import { AdmissionForm } from './components/AdmissionForm';
 import { PaymentForm } from './components/PaymentForm';
 import { StudentList } from './components/StudentList';
@@ -11,7 +10,7 @@ import { LayoutDashboard, UserPlus, Banknote, Users, TrendingDown } from 'lucide
 
 const App: React.FC = () => {
   const [showDashboard, setShowDashboard] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [activeTab, setActiveTab] = useState<TabType>('database');
   const { students, expenses, addStudent, addPayment, deleteStudent, addExpense, deleteExpense } = useStudents();
 
   if (!showDashboard) {
@@ -31,18 +30,16 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard':
-        return <Dashboard students={students} expenses={expenses} />;
+      case 'database':
+        return <StudentList students={students} onDelete={deleteStudent} />;
       case 'admission':
         return <AdmissionForm onAddStudent={addStudent} students={students} />;
       case 'payment':
         return <PaymentForm onAddPayment={addPayment} students={students} />;
-      case 'database':
-        return <StudentList students={students} onDelete={deleteStudent} />;
       case 'expense':
         return <ExpenseManager expenses={expenses} onAddExpense={addExpense} onDeleteExpense={deleteExpense} />;
       default:
-        return <Dashboard students={students} expenses={expenses} />;
+        return <StudentList students={students} onDelete={deleteStudent} />;
     }
   };
 
@@ -55,10 +52,10 @@ const App: React.FC = () => {
         <div className="container mx-auto">
           <div className="flex justify-start md:justify-center min-w-max p-2 space-x-2">
             <NavButton 
-              active={activeTab === 'dashboard'} 
-              onClick={() => setActiveTab('dashboard')} 
-              icon={<LayoutDashboard size={20}/>} 
-              label="ড্যাশবোর্ড" 
+              active={activeTab === 'database'} 
+              onClick={() => setActiveTab('database')} 
+              icon={<Users size={20}/>} 
+              label="ছাত্র তালিকা" 
             />
             <NavButton 
               active={activeTab === 'admission'} 
@@ -77,12 +74,6 @@ const App: React.FC = () => {
               onClick={() => setActiveTab('expense')} 
               icon={<TrendingDown size={20}/>} 
               label="খরচ" 
-            />
-            <NavButton 
-              active={activeTab === 'database'} 
-              onClick={() => setActiveTab('database')} 
-              icon={<Users size={20}/>} 
-              label="ছাত্র তালিকা" 
             />
           </div>
         </div>
