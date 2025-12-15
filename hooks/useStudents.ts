@@ -4,26 +4,131 @@ import { Student, Payment, Expense, PaymentMethod } from '../types';
 const DB_KEY = 'gttc_students_db';
 const EXPENSE_DB_KEY = 'gttc_expenses_db';
 
+// --- DEMO DATA GENERATORS ---
+const TODAY = new Date().toISOString().split('T')[0];
+const YESTERDAY = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+const LAST_MONTH = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+
+const DEMO_STUDENTS: Student[] = [
+  {
+    id: 'GTTC-1001',
+    name: 'মোঃ রহিম উদ্দিন',
+    mobile: '01712345678',
+    course: 'Computer Office App',
+    fee: 5000,
+    admissionDate: LAST_MONTH,
+    payments: [
+      { amount: 2000, date: LAST_MONTH, method: 'Cash', category: 'Admission Fee' },
+      { amount: 3000, date: TODAY, method: 'Bkash', category: 'Monthly Fee' }
+    ]
+  },
+  {
+    id: 'GTTC-1002',
+    name: 'মোসাঃ ফাতেমা বেগম',
+    mobile: '01812345678',
+    course: 'Graphics Design',
+    fee: 8000,
+    admissionDate: LAST_MONTH,
+    payments: [
+      { amount: 4000, date: LAST_MONTH, method: 'Cash', category: 'Admission Fee' }
+    ]
+  },
+  {
+    id: 'GTTC-1003',
+    name: 'আব্দুল করিম',
+    mobile: '01912345678',
+    course: 'Electrical Wiring',
+    fee: 6000,
+    admissionDate: YESTERDAY,
+    payments: [
+      { amount: 1000, date: YESTERDAY, method: 'Nagad', category: 'Admission Fee' }
+    ]
+  },
+  {
+    id: 'GTTC-1004',
+    name: 'সুমাইয়া আক্তার',
+    mobile: '01612345678',
+    course: 'Computer Office App',
+    fee: 5000,
+    admissionDate: TODAY,
+    payments: [
+      { amount: 5000, date: TODAY, method: 'Cash', category: 'Admission Fee' }
+    ]
+  },
+  {
+    id: 'GTTC-1005',
+    name: 'রফিকুল ইসলাম',
+    mobile: '01512345678',
+    course: 'Driving & Auto Mechanics',
+    fee: 10000,
+    admissionDate: TODAY,
+    payments: []
+  }
+];
+
+const DEMO_EXPENSES: Expense[] = [
+  {
+    id: '1',
+    category: 'Office Rent',
+    amount: 5000,
+    date: LAST_MONTH,
+    description: 'Office rent for last month',
+    method: 'Cash'
+  },
+  {
+    id: '2',
+    category: 'Internet Bill',
+    amount: 1000,
+    date: YESTERDAY,
+    description: 'Broadband bill',
+    method: 'Bkash'
+  },
+  {
+    id: '3',
+    category: 'Tea & Entertainment',
+    amount: 250,
+    date: TODAY,
+    description: 'Guests tea and snacks',
+    method: 'Cash'
+  },
+  {
+    id: '4',
+    category: 'Printing & Stationery',
+    amount: 500,
+    date: TODAY,
+    description: 'Paper and Toner',
+    method: 'Cash'
+  }
+];
+
 export const useStudents = () => {
-  // Initialize state directly from localStorage (Lazy Initialization)
-  // This prevents empty state from overwriting data on initial render
+  // Initialize state from localStorage OR fallback to DEMO DATA
   const [students, setStudents] = useState<Student[]>(() => {
     try {
       const storedData = localStorage.getItem(DB_KEY);
-      return storedData ? JSON.parse(storedData) : [];
+      // If local storage has data, use it. If empty array or null, use DEMO data for showcase.
+      if (storedData) {
+         const parsed = JSON.parse(storedData);
+         return parsed.length > 0 ? parsed : DEMO_STUDENTS;
+      }
+      return DEMO_STUDENTS;
     } catch (e) {
       console.error("Failed to load students", e);
-      return [];
+      return DEMO_STUDENTS;
     }
   });
 
   const [expenses, setExpenses] = useState<Expense[]>(() => {
     try {
       const storedExpenses = localStorage.getItem(EXPENSE_DB_KEY);
-      return storedExpenses ? JSON.parse(storedExpenses) : [];
+      if (storedExpenses) {
+          const parsed = JSON.parse(storedExpenses);
+          return parsed.length > 0 ? parsed : DEMO_EXPENSES;
+      }
+      return DEMO_EXPENSES;
     } catch (e) {
       console.error("Failed to load expenses", e);
-      return [];
+      return DEMO_EXPENSES;
     }
   });
 
@@ -100,18 +205,15 @@ export const useStudents = () => {
   };
 
   // Backup & Restore Functions
-  // Returns true if operation was successful/confirmed
   const importData = (data: { students: Student[], expenses: Expense[] }): boolean => {
     if (window.confirm('সতর্কতা: বর্তমান ডেটা নতুন আপলোড করা ডেটা দ্বারা প্রতিস্থাপন করা হবে। আপনি কি নিশ্চিত?')) {
       
       const validStudents = Array.isArray(data.students) ? data.students : [];
       const validExpenses = Array.isArray(data.expenses) ? data.expenses : [];
 
-      // Update State
       setStudents(validStudents);
       setExpenses(validExpenses);
 
-      // Force Save to LocalStorage immediately to ensure persistence
       localStorage.setItem(DB_KEY, JSON.stringify(validStudents));
       localStorage.setItem(EXPENSE_DB_KEY, JSON.stringify(validExpenses));
 
@@ -120,10 +222,8 @@ export const useStudents = () => {
     return false;
   };
 
-  // Returns true if operation was successful/confirmed
   const resetData = (): boolean => {
     if (window.confirm('সতর্কতা: আপনি কি নিশ্চিতভাবে সমস্ত ডেটা ডিলিট করতে চান? এই কাজ আর ফিরানো যাবে না।')) {
-       // Second confirmation
        if(window.confirm('সত্যিই সব ডিলিট করবেন?')) {
           setStudents([]);
           setExpenses([]);
