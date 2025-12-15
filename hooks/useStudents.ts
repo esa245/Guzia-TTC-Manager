@@ -1,8 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Student, Payment, Expense, PaymentMethod } from '../types';
-
-const DB_KEY = 'gttc_students_db';
-const EXPENSE_DB_KEY = 'gttc_expenses_db';
 
 // --- DEMO DATA GENERATORS ---
 const TODAY = new Date().toISOString().split('T')[0];
@@ -67,41 +64,9 @@ const DEMO_EXPENSES: Expense[] = [
 ];
 
 export const useStudents = () => {
-  const [students, setStudents] = useState<Student[]>(() => {
-    try {
-      const storedData = localStorage.getItem(DB_KEY);
-      if (storedData) {
-         const parsed = JSON.parse(storedData);
-         return parsed.length > 0 ? parsed : DEMO_STUDENTS;
-      }
-      return DEMO_STUDENTS;
-    } catch (e) {
-      console.error("Failed to load students", e);
-      return DEMO_STUDENTS;
-    }
-  });
-
-  const [expenses, setExpenses] = useState<Expense[]>(() => {
-    try {
-      const storedExpenses = localStorage.getItem(EXPENSE_DB_KEY);
-      if (storedExpenses) {
-          const parsed = JSON.parse(storedExpenses);
-          return parsed.length > 0 ? parsed : DEMO_EXPENSES;
-      }
-      return DEMO_EXPENSES;
-    } catch (e) {
-      console.error("Failed to load expenses", e);
-      return DEMO_EXPENSES;
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem(DB_KEY, JSON.stringify(students));
-  }, [students]);
-
-  useEffect(() => {
-    localStorage.setItem(EXPENSE_DB_KEY, JSON.stringify(expenses));
-  }, [expenses]);
+  // Initialize directly with Demo Data, removed localStorage logic
+  const [students, setStudents] = useState<Student[]>(DEMO_STUDENTS);
+  const [expenses, setExpenses] = useState<Expense[]>(DEMO_EXPENSES);
 
   const addStudent = (studentData: Omit<Student, 'payments'>, initialPayment: number = 0, paymentMethod: PaymentMethod = 'Cash'): string | null => {
     const exists = students.some(s => s.id.toLowerCase() === studentData.id.toLowerCase());
